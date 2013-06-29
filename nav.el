@@ -714,16 +714,58 @@ instance."
       (windmove-right)
       is-nav)))
 
+
+(setq nav-buffer-to-source-window ())
+
+(defun nav-add-to-nav-list (window)
+  (setq nav-buffer-to-source-window
+        (cons (list (current-buffer) window) nav-buffer-to-source-window)))
+
+(defun nav-remove-from-nav-list ()
+  (let (current-nav-buffer)
+    (setq current-nav-buffer (current-buffer))
+    (mapcar
+     (lambda (x)
+       (pcase x
+         (`(,nav-buffer ,_)
+          (if (equal current-nav-buffer nav-buffer)
+              (setq nav-buffer-to-source-window (remove x nav-buffer-to-source-window))))))
+     nav-buffer-to-source-window)))
+
+(defun nav-search-nav-buffer-recur (nav-list search-window)
+  (pcase (car nav-list)
+    (`(,nav-buffer ,related-window)
+     (if (equal search-window related-window)
+         nav-buffer
+       (nav-search-nav-buffer-recur (cdr nav-list) search-window)))))
+
+(defun nav-get-related-nav-buffer (&optional buffer)
+  ; returns nav buffer related to given buffer
+  (let (search-window)
+    (setq search-window (get-buffer-window (if (bufferp buffer)
+                                               buffer
+                                             (current-buffer))))
+    (nav-search-nav-buffer-recur nav-buffer-to-source-window search-window)))
+
+;; nav-toggle tracks which window it is connected to (was toggled from)
+;; nav-buffer-to-source-window variable contains pair of nav buffer
+;; and original window
+
 (defun nav-toggle ()
   "Toggles the nav panel."
   (interactive)
   (if (nav-current-buffer-is-nav)
-      (nav-unsplit-window-horizontally)
+      (progn
+        (nav-remove-from-nav-list)
+        (nav-unsplit-window-horizontally))
     (if (nav-left-neighbor-is-nav)
-	(progn
-	  (windmove-left)
-	  (nav-unsplit-window-horizontally))
-      (nav))))
+        (progn
+          (windmove-left)
+          (nav-remove-from-nav-list)
+          (nav-unsplit-window-horizontally))
+      (progn
+        (let ((current-window (nav)))
+          (nav-add-to-nav-list current-window))))))
 
 (defun nav-in-place ()
   "Starts Nav in the current window."
@@ -734,13 +776,16 @@ instance."
 
 ;; The next line is for ELPA, the Emacs Lisp Package Archive.
 ;;;###autoload
+
 (defun nav ()
   "Opens Nav in a new window to the left of the current one."
   (interactive)
-  (let ((default-directory (nav-get-working-dir)))
-    (split-window-horizontally)
+  (let ((default-directory (nav-get-working-dir))
+        (new-window (split-window-horizontally)))
     (nav-in-place)
-    (nav-set-window-width nav-width)))
+    (nav-set-window-width nav-width)
+    new-window))
+
 
 (provide 'nav)
 
