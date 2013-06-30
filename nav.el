@@ -747,9 +747,17 @@ instance."
                                              (current-buffer))))
     (nav-search-nav-buffer-recur nav-buffer-to-source-window search-window)))
 
-;; nav-toggle tracks which window it is connected to (was toggled from)
-;; nav-buffer-to-source-window variable contains pair of nav buffer
-;; and original window
+(defun nav-jump-to-current-dir ()
+  "Updates nav panel related to current buffer with new directory"
+  (interactive)
+  (let ((nav-buffer (nav-get-related-nav-buffer))
+        (current-buffer-name (buffer-file-name)))
+    (if (bufferp nav-buffer)
+        (with-current-buffer nav-buffer
+          (progn
+            (nav-jump-to-dir (file-name-directory current-buffer-name))
+            (if (boundp 'linum-mode)
+                (linum-update-current)))))))
 
 (defun nav-toggle ()
   "Toggles the nav panel."
