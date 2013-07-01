@@ -1,31 +1,33 @@
 A clone of http://code.google.com/p/emacs-nav version 49
 
-emacs-nav: simple file-system navigation
-========================================
+## emacs-nav: simple file-system navigation
 
-Nav is a lightweight solution for Emacs users who want something like
-TextMate's file browser, or the Eclipse project view. Unlike these
-two, Nav only shows the contents of a single directory at a time. Nav
-can be run painlessly in terminals, where Speedbar either fails on its
-attempt to make a new frame or is hidden. Nav's terminal-friendliness
-comes from running in the frame where it was started, keeping window
-management simple. The Nav key bindings are also simple -- each
-key command is a single keystroke long.
+Nav:
+- is a lightweight directory browser.
+- only shows the contents of a single directory at a time.
+- can be run painlessly in terminals.
+- can follow buffer directory
 
-# Install
+### Install
 Put something like this in your ~/.emacs:
 
+```
 (add-to-list 'load-path "/directory/containing/nav/")
 (require 'nav)
 (nav-disable-overeager-window-splitting)
-;; Optional: set up a quick key to toggle nav
-;; (global-set-key [f8] 'nav-toggle)
+(global-set-key (kbd "<f8>") 'nav-toggle)
+```
 
-# Navigate!
+### Navigate
 Type M-x nav to start navigating.
-
 In the nav window, hit ? to get help on keyboard shortcuts.
+Nav may be customized over M-x customize.
 
-To set options for Nav, type M-x customize, then select Applications,
-Nav.
+### Following buffer directory
 
+Nav may be used in conjunction with buffer switching commands.
+Using [popup-switcher](https://github.com/kostafey/popup-switcher)
+nav may be configured like this:
+```(add-hook 'psw-after-switch-hook 'nav-jump-to-current-dir)```
+After switching the buffer, nav will be updated with new buffer file
+directory, if any.

@@ -740,7 +740,8 @@ instance."
        (nav-search-nav-buffer-recur (cdr nav-list) search-window)))))
 
 (defun nav-get-related-nav-buffer (&optional buffer)
-  ; returns nav buffer related to given buffer
+  "returns nav buffer related to given buffer"
+  (interactive)
   (let (search-window)
     (setq search-window (get-buffer-window (if (bufferp buffer)
                                                buffer
@@ -751,11 +752,11 @@ instance."
   "Updates nav panel related to current buffer with new directory"
   (interactive)
   (let ((nav-buffer (nav-get-related-nav-buffer))
-        (current-buffer-name (buffer-file-name)))
-    (if (bufferp nav-buffer)
+        (file-name (buffer-file-name)))
+    (if (and (bufferp nav-buffer) file-name)
         (with-current-buffer nav-buffer
           (progn
-            (nav-jump-to-dir (file-name-directory current-buffer-name))
+            (nav-jump-to-dir (file-name-directory file-name))
             (if (boundp 'linum-mode)
                 (linum-update-current)))))))
 
