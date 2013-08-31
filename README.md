@@ -41,8 +41,7 @@ add this to you init file:
 ```lisp
 (defun nav-mode-hl-hook ()
   (local-set-key (kbd "<right>") 'nav-open-file-under-cursor)
-  (local-set-key (kbd "<left>")  'nav-go-up-one-dir)
-  )
+  (local-set-key (kbd "<left>")  'nav-go-up-one-dir))
 
 (add-hook 'nav-mode-hook 'nav-mode-hl-hook)
 ```
@@ -67,8 +66,7 @@ than it gets a bit more complex:
   (set (make-local-variable 'hl-line-face) 'nav-hl-line)
   (hl-line-mode t)
   (local-set-key (kbd "<right>") 'nav-open-file-under-cursor)
-  (local-set-key (kbd "<left>")  'nav-go-up-one-dir)
-  )
+  (local-set-key (kbd "<left>")  'nav-go-up-one-dir))
 
 (add-hook 'nav-mode-hook 'nav-mode-hl-hook)
 ```
