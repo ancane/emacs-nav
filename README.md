@@ -1,12 +1,13 @@
-A clone of http://code.google.com/p/emacs-nav version 49
+A fork of http://code.google.com/p/emacs-nav version 49
 
 ## emacs-nav: simple file-system navigation
 
 Nav:
-- is a lightweight directory browser.
-- only shows the contents of a single directory at a time.
-- can be run painlessly in terminals.
+- is a lightweight directory browser
+- only shows the contents of a single directory at a time
+- can be run painlessly in terminals
 - can follow buffer directory
+- provides arrow keys navigation
 
 ### Install
 Put something like this in your ~/.emacs:
@@ -44,11 +45,11 @@ add this to you init file:
   )
 
 (add-hook 'nav-mode-hook 'nav-mode-hl-hook)
+```
 
-```lisp
 It looks much better when used with hl-line-mode.
 But if you, like me, are using ```(global-hl-line-mode)```
-and want to have different face for current line in nav,
+and want to have a different face for current line in nav,
 than it gets a bit more complex:
 
 ```lisp
@@ -57,7 +58,6 @@ than it gets a bit more complex:
   "Custom face for highlighting the current line in nav mode."
   :version "22.1"
   :group 'hl-line)
-
 
 ;; This allows global-hl-line be disabled for certain buffers (nav in our case)
 (make-variable-buffer-local 'global-hl-line-mode)
@@ -71,5 +71,4 @@ than it gets a bit more complex:
   )
 
 (add-hook 'nav-mode-hook 'nav-mode-hl-hook)
-
 ```
