@@ -48,7 +48,7 @@
 
 (if (not (featurep 'full-ack))
     (condition-case err
-	(require 'ack)
+        (require 'ack)
       (error
        (message "Could not load ack."))))
 
@@ -73,24 +73,24 @@ other windows.
 
 (defcustom nav-boring-file-regexps
   (list "^[.][^.].*$"        ; hidden files such as .foo
-	"^[.]$"              ; current directory
-	"~$"
-	"[.]elc$"
-	"[.]pyc$"
-	"[.]o$"
-	"[.]bak$"
-	;; Stolen from Ack:
-	"^_MTN$"  ; Monotone
-	"^blib$"  ; Perl module building
-	"^CVS$"  ; CVS
-	"^RCS$"  ; RCS
-	"^SCCS$"  ; SCCS
-	"^_darcs$"  ; darcs
-	"^_sgbak$"  ; Vault/Fortress
-	"^autom4te.cache$"  ; autoconf
-	"^cover_db$"  ; Devel::Cover
-	"^_build$"  ; Module::Build
-	)
+        "^[.]$"              ; current directory
+        "~$"
+        "[.]elc$"
+        "[.]pyc$"
+        "[.]o$"
+        "[.]bak$"
+        ;; Stolen from Ack:
+        "^_MTN$"  ; Monotone
+        "^blib$"  ; Perl module building
+        "^CVS$"  ; CVS
+        "^RCS$"  ; RCS
+        "^SCCS$"  ; SCCS
+        "^_darcs$"  ; darcs
+        "^_sgbak$"  ; Vault/Fortress
+        "^autom4te.cache$"  ; autoconf
+        "^cover_db$"  ; Devel::Cover
+        "^_build$"  ; Module::Build
+        )
   "*Nav ignores filenames that match any regular expression in this list."
   :type '(repeat string)
   :group 'nav)
@@ -151,8 +151,8 @@ make the window too small, according to the following equation:
 window-width - delta' = max(window-min-width, window-width - delta)
 "
   (let ((delta (- (window-width)
-		  (max window-min-width
-		       (- (window-width) delta)))))
+                  (max window-min-width
+                       (- (window-width) delta)))))
     (shrink-window-horizontally delta)
     (nav-remember-current-width-during-this-session)))
 
@@ -268,7 +268,7 @@ visited. A value of 1 would start the cursor off on ../.")
 ;; http://www.emacswiki.org/emacs/ElispCookbook#toc41
 (defun nav-filter (condp lst)
   (delq nil
-	(mapcar (lambda (x) (and (funcall condp x) x)) lst)))
+        (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
 
 (defun nav-filter-out-boring-filenames (filenames boring-regexps)
   (nav-filter
@@ -299,7 +299,7 @@ visited. A value of 1 would start the cursor off on ../.")
 (defun nav-restore-cursor-line ()
   "Remembers what line we were on last time we visited this directory."
   (let ((line-num (or (nav-get-line-for-cur-dir)
-		      nav-default-line-num)))
+                      nav-default-line-num)))
     (nav-goto-line line-num)))
 
 (defun nav-open-file (filename)
@@ -360,11 +360,11 @@ and then moves to the new window just formed on the right."
 
 (defun nav-get-shrink-wrap-width ()
   (let* ((lines (split-string (buffer-string) "\n" t))
-	 (num-lines (length lines))
-	 (line-lengths (mapcar 'length lines))
-	 (desired-width (+ 1 (apply 'max line-lengths)))
-	 (max-width (/ (frame-width) 2))
-	 (new-width (min desired-width max-width)))
+         (num-lines (length lines))
+         (line-lengths (mapcar 'length lines))
+         (desired-width (+ 1 (apply 'max line-lengths)))
+         (max-width (/ (frame-width) 2))
+         (new-width (min desired-width max-width)))
     new-width))
 
 (defun nav-shrink-wrap ()
@@ -398,10 +398,10 @@ This works like a web browser's back button."
 
 (defun nav-non-boring-directory-files (dir)
   (nav-filter-out-boring-filenames (directory-files dir)
-				   (if nav-filtered-p
-				       nav-boring-file-regexps
-				     '()
-				     )))
+                                   (if nav-filtered-p
+                                       nav-boring-file-regexps
+                                     '()
+                                     )))
 
 (defun nav-dir-suffix (dir)
   (replace-regexp-in-string ".*/" "" (directory-file-name dir)))
@@ -430,17 +430,17 @@ This works like a web browser's back button."
 (defun nav-button-action-to-open-file (button)
   "Opens a file or directory in response to a button."
   (let* ((buffer (overlay-buffer button))
-	 (window-with-nav (get-buffer-window buffer)))
+         (window-with-nav (get-buffer-window buffer)))
     (nav-select-window window-with-nav)
     (if (= 1 (count-windows))
-	(split-window-horizontally))
+        (split-window-horizontally))
     (nav-open-file-other-window (button-label button))
 
     (if nav-width
-	(let ((other-window (nav-get-current-window)))
-	  (select-window window-with-nav)
-	  (nav-set-window-width nav-width)
-	  (select-window other-window)))))
+        (let ((other-window (nav-get-current-window)))
+          (select-window window-with-nav)
+          (nav-set-window-width nav-width)
+          (select-window other-window)))))
 
 (defun nav-button-action-to-open-dir (button)
   (let ((buffer (overlay-buffer button)))
@@ -450,20 +450,20 @@ This works like a web browser's back button."
 (defun nav-make-filenames-clickable ()
   (condition-case err
       (save-excursion
-	(nav-goto-line 1)
-	(dotimes (i (count-lines 1 (point-max)))
-	  (let* ((start (line-beginning-position))
-		 (end (line-end-position))
-		 (filename (buffer-substring-no-properties start end))
-		 (action (if (file-directory-p filename)
-			     'nav-button-action-to-open-dir
-			   'nav-button-action-to-open-file)))
-	    (make-button start end
-			 'action action
-			 'follow-link t
-			 'face nav-button-face
-			 'help-echo nil))
-	  (forward-line 1)))
+        (nav-goto-line 1)
+        (dotimes (i (count-lines 1 (point-max)))
+          (let* ((start (line-beginning-position))
+                 (end (line-end-position))
+                 (filename (buffer-substring-no-properties start end))
+                 (action (if (file-directory-p filename)
+                             'nav-button-action-to-open-dir
+                           'nav-button-action-to-open-file)))
+            (make-button start end
+                         'action action
+                         'follow-link t
+                         'face nav-button-face
+                         'help-echo nil))
+          (forward-line 1)))
     (error
      ;; This can happen for versions of emacs that don't have
      ;; make-button defined.
@@ -471,7 +471,9 @@ This works like a web browser's back button."
 
 (defun nav-string< (s1 s2)
   "Tells whether S1 comes lexically before S2, ignoring case."
-  (string< (downcase s1) (downcase s2)))
+  (cond ((and (string-match "/$" s1) (not (string-match "/$" s2))) t)
+        ((and (not (string-match "/$" s1)) (string-match "/$" s2)) nil)
+        (t (string< (downcase s1) (downcase s2)))))
 
 (defun nav-show-dir (dir)
   (let ((new-contents '()))
@@ -480,7 +482,7 @@ This works like a web browser's back button."
                           (if (file-directory-p filename)
                               "/"
                             "")
-			  )))
+                          )))
         (push line new-contents)))
     (let* ((new-contents (sort new-contents 'nav-string<))
            (new-contents (nav-join "\n" new-contents)))
@@ -491,9 +493,9 @@ This works like a web browser's back button."
 (defun nav-set-window-width (n)
   (let ((n (max n window-min-width)))
     (if (> (window-width) n)
-	(nav-shrink-window-horizontally (- (window-width) n)))
+        (nav-shrink-window-horizontally (- (window-width) n)))
     (if (< (window-width) n)
-	(nav-enlarge-window-horizontally (- n (window-width))))))
+        (nav-enlarge-window-horizontally (- n (window-width))))))
 
 (defun nav-save-window-width ()
   "Saves the width of the current window as the default width for Nav."
@@ -513,19 +515,19 @@ This works like a web browser's back button."
   "Recursively finds files whose names match a Perl regular expression."
   (interactive "sPattern: ")
   (let* ((pattern (format "%s[^/]*$" pattern))
-	 (find-command (format "ack -a -l '.' | ack %s" pattern))
-	 (inhibit-read-only t))
+         (find-command (format "ack -a -l '.' | ack %s" pattern))
+         (inhibit-read-only t))
     (erase-buffer)
     (call-process-shell-command find-command nil (current-buffer))
     (nav-make-filenames-clickable)
     (message "Hit r to bring back Nav directory listing.")
     (cond ((string= "" (buffer-string))
-	   (insert "No matching files found."))
-	  (t
-	   ;; Enable nav keyboard shortcuts, mainly so hitting enter will open
-	   ;; files.
-	   (use-local-map nav-mode-map))
-	  )
+           (insert "No matching files found."))
+          (t
+           ;; Enable nav keyboard shortcuts, mainly so hitting enter will open
+           ;; files.
+           (use-local-map nav-mode-map))
+          )
     (forward-line -1)
     ))
 
@@ -553,14 +555,14 @@ This works like a web browser's back button."
 
 (defun nav-make-mode-line (mode dir)
   (concat "-(nav)"
-	  (nav-dir-suffix (file-truename dir))
-	  "/"
-	  " "
-	  (format "[%s]"
-		  (if nav-filtered-p
-		      "filtered"
-		    "unfiltered"))
-	  )
+          (nav-dir-suffix (file-truename dir))
+          "/"
+          " "
+          (format "[%s]"
+                  (if nav-filtered-p
+                      "filtered"
+                    "unfiltered"))
+          )
   )
 
 (defun nav-delete-file-or-dir (filename)
@@ -568,7 +570,7 @@ This works like a web browser's back button."
   (if (and (file-directory-p filename)
            (not (file-symlink-p (directory-file-name filename))))
       (when (yes-or-no-p (format "Really delete directory %s ?" filename))
-	(delete-directory filename t)
+        (delete-directory filename t)
         (nav-refresh))
       ;; We first use directory-file-name to strip the trailing slash
       ;; if it's a symlink to a directory.
@@ -584,7 +586,7 @@ This works like a web browser's back button."
   (let ((filename (nav-get-cur-line-str))
         (target-name (read-file-name "Copy to: " default-directory nil nil (nav-get-cur-line-str))))
     (if (file-directory-p filename)
-	(copy-directory filename target-name)
+        (copy-directory filename target-name)
       (copy-file filename target-name)))
   (nav-refresh))
 
@@ -599,7 +601,7 @@ This works like a web browser's back button."
   (interactive "FCopy to: ")
   (let ((filename (nav-get-cur-line-str)))
     (if (file-directory-p filename)
-	(copy-directory filename target-name)
+        (copy-directory filename target-name)
       (copy-file filename target-name)))
   (nav-refresh))
 
@@ -679,8 +681,8 @@ opening files in a large frame."
 none."
   (if (nav-current-window-has-left-window-neighbor)
       (save-selected-window
-	(windmove-left)
-	(window-width))
+        (windmove-left)
+        (window-width))
     0))
 
 ;; Copied from subr.el
@@ -694,15 +696,15 @@ Otherwise, return result of last form in BODY."
   "Attempts to reverse the effect of split-window-horizontally."
   (interactive)
   (let ((nav-width (nav-window-width-with-chrome))
-	(left-width (nav-width-of-window-to-left))
-	(buf (current-buffer)))
+        (left-width (nav-width-of-window-to-left))
+        (buf (current-buffer)))
     (nav-ignore-errors
      (windmove-right))
     (kill-buffer buf)
     (let* ((new-left-width (nav-width-of-window-to-left))
-	   (left-window-expanded (> new-left-width left-width)))
+           (left-window-expanded (> new-left-width left-width)))
       (if left-window-expanded
-	  (enlarge-window-horizontally nav-width)))))
+          (enlarge-window-horizontally nav-width)))))
 
 ;; Copied from subr.el
 (defun nav-string-prefix-p (str1 str2 &optional ignore-case)
