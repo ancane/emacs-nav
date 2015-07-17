@@ -119,7 +119,8 @@ directories."
     (define-key keymap "d" 'nav-delete-file-or-dir-on-this-line)
     (define-key keymap "e" 'nav-invoke-dired)
     (define-key keymap "f" 'nav-find-files)
-    (define-key keymap "g" 'grep-find)
+    ;;(define-key keymap "g" 'grep-find)
+    (define-key keymap "g" 'nav-projectile-ag)
     (define-key keymap "h" 'nav-jump-to-home)
     (define-key keymap "j" 'nav-jump-to-dir)
     (define-key keymap "m" 'nav-move-file-or-dir)
@@ -143,6 +144,22 @@ directories."
     (define-key keymap [(control ?x) (control ?f)] 'nav-find-file-other-window)
     (define-key keymap [(control ?x) ?b] 'nav-switch-to-buffer-other-window)
     keymap))
+
+(defun nav-projectile-ag (search-term &optional arg)
+  "Run an ag search with SEARCH-TERM in the project.
+
+With an optional prefix argument ARG SEARCH-TERM is interpreted as a
+regular expression."
+  (interactive
+   (list (read-from-minibuffer
+          (projectile-prepend-project-name (format "Ag %ssearch for: " (if current-prefix-arg "regexp " ""))))
+         current-prefix-arg))
+  (if (fboundp 'ag-regexp)
+      (let ((ag-command (if arg 'ag-regexp 'ag))
+            ;; reset the prefix arg, otherwise it will affect the ag-command
+            (current-prefix-arg nil))
+        (funcall ag-command search-term (projectile-project-root)))
+    (error "Ag is not available")))
 
 (defun nav-shrink-window-horizontally (delta)
   "First, compute a new value for the delta to make sure we don't
